@@ -10,16 +10,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserDaoService {
-	
+
 	private static List<User> users = new ArrayList<>();
 	
+	private static int id = 0;
+
 	static {
-		users.add(new User(1, "Aniket", LocalDate.now().minusYears(26)));
-		users.add(new User(2, "Bipin", LocalDate.now().minusYears(20)));
-		users.add(new User(3, "Chetan", LocalDate.now().minusYears(28)));
-		users.add(new User(4, "Dev", LocalDate.now().minusYears(36)));
+		users.add(new User(++id, "Aniket", LocalDate.now().minusYears(26)));
+		users.add(new User(++id, "Bipin", LocalDate.now().minusYears(20)));
+		users.add(new User(++id, "Chetan", LocalDate.now().minusYears(28)));
+		users.add(new User(++id, "Dev", LocalDate.now().minusYears(36)));
 	}
-	
+
 	public List<User> findAll() {
 		return users;
 	}
@@ -34,10 +36,15 @@ public class UserDaoService {
 //		}
 //		return null;
 //	}
-	
+
 	public User findOneUser(int id) {
-		Predicate<User> predicate = user -> user.getId().equals(id);
+		Predicate<? super User> predicate = user -> user.getId().equals(id);
 		return users.stream().filter(predicate).findFirst().get();
 	}
-	
+
+	public void save(User user) {
+		user.setId(++id);	
+		users.add(user);
+	}
+
 }
