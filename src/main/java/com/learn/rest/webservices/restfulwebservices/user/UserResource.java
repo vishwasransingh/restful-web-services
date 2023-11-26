@@ -1,6 +1,7 @@
 package com.learn.rest.webservices.restfulwebservices.user;
 
 import java.net.URI;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,13 @@ public class UserResource {
 	}
 	
 	@GetMapping("/users/{id}")
-	public User findOneUser(@PathVariable int id) {
-		return service.findOneUser(id);
+	public User retriveUser(@PathVariable int id) {
+		User user = service.findOneUser(id);
+		
+		if(user == null)
+			throw new UserNotFoundException("id : " + id);
+			
+		return user;
 	}
 	
 	@PostMapping("/users")
