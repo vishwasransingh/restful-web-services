@@ -5,12 +5,15 @@ import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class UserResource {
@@ -31,13 +34,13 @@ public class UserResource {
 		User user = service.findOneUser(id);
 		
 		if(user == null)
-			throw new UserNotFoundException("id : " + id);
+			throw new UserNotFoundException("User not found! ID :: " + id);
 			
 		return user;
 	}
 	
 	@PostMapping("/users")
-	public ResponseEntity<User> createNewUser(@RequestBody User user) {
+	public ResponseEntity<User> createNewUser(@Valid @RequestBody User user) {
 		
 		User savedUser = service.save(user);
 		
@@ -47,6 +50,11 @@ public class UserResource {
 						.toUri();
 		
 		return ResponseEntity.created(location).build();
+	}
+	
+	@DeleteMapping("/users/{id}")
+	public void deleteUser(@PathVariable int id) {
+		service.deleteById(id);
 	}
 	
 }
