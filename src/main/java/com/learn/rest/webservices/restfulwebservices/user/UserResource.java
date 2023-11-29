@@ -4,9 +4,12 @@ import java.net.URI;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.Locale;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,13 +39,18 @@ public class UserResource {
 	}
 
 	@GetMapping("/users/{id}")
-	public User retriveUser(@PathVariable int id) {
+	public EntityModel<User> retriveUser(@PathVariable int id) {
 		User user = service.findOneUser(id);
 
 		if (user == null)
 			throw new UserNotFoundException("User not found! ID :: " + id);
 
-		return user;
+		EntityModel<User> entityModel = EntityModel.of(user);
+
+		WebMvcLinkBuilder link = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+		entityModel.add(link.withRel("all-users"));
+
+		return entityModel;
 	}
 
 	@PostMapping("/users")
