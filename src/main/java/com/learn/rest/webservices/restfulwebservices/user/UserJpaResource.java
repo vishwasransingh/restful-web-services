@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.learn.rest.webservices.restfulwebservices.jpa.UserRepository;
+import com.learn.rest.webservices.restfulwebservices.post.Post;
 
 import jakarta.validation.Valid;
 
@@ -81,6 +82,14 @@ public class UserJpaResource {
 
 		return messageSource.getMessage("good.morning.message", null, "Default Message", locale);
 
+	}
+	
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrieveAllPostsForUser(@PathVariable int id) {
+		Optional<User> user = repository.findById(id);
+		if (user.isEmpty())
+			throw new UserNotFoundException("User not found! ID :: " + id);
+		return user.get().getPosts();
 	}
 
 }
